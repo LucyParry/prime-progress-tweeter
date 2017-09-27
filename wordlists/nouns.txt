@@ -1,0 +1,496 @@
+#hashtag
+journal
+guitarist
+boundary
+axiom
+prognostication
+cornucopia
+metaphor
+progeny
+oxymoron
+switcheroo
+accoutrement
+vernacular
+plethora
+hubris
+euphemism
+bifurcation
+protagonist
+button
+umbrella
+abstract method
+absurdism
+abyss
+access modifiers
+accountant
+adenosine triphosphate
+advertising
+aging emo
+amphibology
+analysis
+anachronism
+anarchism
+antelope
+antiquark
+apoptosis
+army of caterpillars
+artificial intelligence
+asparagus
+assertion
+assumptions
+astrobleme
+atlas
+attention to detail
+augmented reality
+autocorrect
+autotroph
+baby
+backstory
+bacon
+bacterium 
+bag for life
+bake off
+ball
+ballot box
+ballpoint pen
+barcode scanner
+baryon
+base 64 encoding
+bazooka
+bean
+bibliopole
+bicycle race
+bioethics
+biology
+blatherskit
+blobfish
+boneless banquet
+boobies
+Boolean condition
+boots 'n cats
+bootstraps
+borborygmus
+boring machine
+boss of writing
+bottle of rum
+bottom
+boule de neige
+brain implant
+breadroll
+breakfast
+britches
+brother
+Brucey bonus
+bubble sort
+buccaneer
+builders merchant
+butterfly
+bytecode
+cake
+calendar
+Cambrian explosion
+camel
+capitalism
+carbon emissions
+cardboard
+cardigan
+carnivore
+carpet of pine cones
+cashews
+caterwaul
+champagne
+chanticleer
+chemistry
+cherry
+chicken
+chiliad
+chin hair
+chocolate
+christmas jumper
+claptrap
+coalition of chaos
+cocktail stick
+coffee
+collapse of civilisation
+comma-separated value
+commuter
+compilation
+compiler
+computer
+concatenation
+confirmation bias
+consequences
+consideration
+conspiracy theory
+constructor chaining
+continuous improvement
+contrail
+conversational tone
+coprolalia
+corkscrew laser
+corner base unit
+corporation tax
+cosmic latte
+countenance
+covfefe
+cowboys
+cowgirl
+crying shame
+cryptography
+cryptophasia
+cryptozoology
+Ctrl-Z
+curriculum
+customer service
+cyber sex
+cybersquatter
+cynicism
+cytoplasm
+data mining
+database
+death wish
+debacle
+dentist
+dependency injection
+dictionary
+diddly doink
+Dijkstra
+diphthong
+dishwasher tablet
+Downing Street cat
+early nineties
+economics
+egg
+Eiffel Tower replica
+elastic band
+election
+electroweak unification
+emergency
+emphasis
+employee
+encapsulation
+endosymbiosis
+engineer
+etymology
+eukaryote
+evening
+examination
+existentialism
+factory reset button
+fake news
+Fillet o'Fish
+fish wife
+flagellum
+flaperon
+flower duet
+follicle
+Freddie Fazbear
+freedom
+Friday
+friendly grandma
+frosty reception
+funambulist
+fungus
+Fungus Amungus Yuck Truck
+gaberlunzie
+game of darts
+gaming laptop
+geological unconformity
+geology
+Glastonbury
+glockenspiel
+goldfish
+good intentions
+Google
+government
+green onions
+gristle
+gymnastics
+haberdashery
+hairy legs
+hallux
+hash table
+heavens to Murgatroid
+Heckmondwike
+hedonism
+hemidemisemiquaver
+hen's teeth
+heterotroph
+hexagon
+historian
+hi-vis jacket
+homogeneous collection
+horn
+horse
+horse's patoot
+hotline bling
+House of Lords
+Hubble constant
+hyperbole
+immutable object
+indexable collection
+information
+insect
+internet
+interview
+introductory text
+iris
+IT department
+itchy underwear
+Jaffa Cake
+Java bean
+Jesus
+Jigglypuff
+JSON Donovan
+jumble sale
+jumping to conclusions
+k nearest neighbour
+kahuna
+key change
+keys to Number 10
+knickers
+landscape
+lawnmower
+lazy loading
+lecture
+Lego minifigure
+library
+life
+liquid oxygen
+literature
+local variable
+lodge of beavers
+logorrhea
+love
+Lovelace
+lycanthropy
+machine learning
+mafic mineral
+magazines
+Magikarp
+mandible
+mass hysteria
+matrix
+meiosis
+microwave
+millennial
+minibeast
+misanthropy
+mistakes
+mitochondrial DNA
+Monday
+moon
+moose
+Moses
+motorway services
+mountain goat
+mullion
+multi-billionaire
+multiple inheritance
+muscle
+nagware
+Nandos
+nest of pigs
+new version
+newspaper
+noctambulist
+nose
+noun
+nozzle
+null reference exception
+obligation
+occupation
+octopus
+oenophile
+offices
+omelette
+one pound fish
+open flame
+opinion piece
+optimism
+O'Reilly
+oscilloscope
+osteoblast
+pacifism
+pack of weasels
+painting
+palimpsest
+pantaloons
+paper planes
+paralipsis
+parliament of owls
+passport
+passport radio
+patchy wi-fi
+perennial weed
+persiflage
+pettitoe
+Phil Mitchell
+philosophy
+phylogenetic tree
+physics
+Pikachu
+pike
+pirate
+piss up in a brewery
+pizza
+placental mammal
+plastic
+poetry
+pointilism
+politics
+polymorphic method
+pomme de terre
+poppycock
+porphyritic texture
+power ballad
+priority booking
+private investor
+procrastination
+programmer
+prokaryote
+proton pump
+pseudorandomness
+pudding
+punch bag
+punctuation
+quantum chromodynamics
+queen
+radio
+radio telescope
+raincoat
+raised ironwork
+rare breed of sheep
+realism
+red squirrel
+reductions 
+relational database
+rhetoric
+ribosome
+rigmarole
+rock
+romanticism
+rookery
+ruminant
+sacapuntas
+salad
+sandwich
+Santa
+saturated fats
+Saturday
+saucepan
+saucier
+sausage
+Scoville scale
+Scrabble tiles
+scrum master
+sex
+shadow cabinet
+shampoo suicide
+shark
+shark week
+shebang
+shed of the year
+shenanigans
+shibori
+shoreline
+silver bullet
+sister
+situation
+skeleton
+skeuomorph
+smell
+snakebite
+snake's back
+snake's legs
+snowstorm
+social media content
+society
+sock
+soft Brexit
+software
+software engineer
+solar eclipse
+song and dance man
+sound barrier
+sourpuss
+space tortoise
+spatula
+spawn of satan
+specialism
+spectacles
+speed of light
+spicy bean burger
+spreadsheet
+sprocket
+squid
+statistical significance
+stoicism
+stranger
+string interpolation
+stromatolite
+Sunday
+surrealism
+suspenders
+swag bag
+swine
+syntax error
+tank
+technology
+telephone
+television
+thingamajig
+throat lozenge
+Thursday
+tombola
+top hat
+tourist
+transom
+Trogdor
+trollface
+trollop
+trotter
+trousers
+trumpet
+trypophobia
+Tuesday
+Turing
+turkey
+tweezers
+twitter bot
+Ulam spiral
+ultracrepidarian
+uncanny valley
+unicorn
+unprofessional attire
+uroboros
+variation
+virtual machine
+visble spectrum
+volcanic crater
+walkabout creek
+wasabi
+weasel
+web
+Wednesday
+weekend
+whatnot
+Whats-her-face
+wheelie bin
+wichita lineman
+wicket
+wine
+wing
+witchcraft
+zeitgeist
+doryphore
+entomophagy
+humdudgeon
+lactarium
+merkin
+nugacity
+earache
+orrery
+opsimath
+poo emoji
+spectacles
