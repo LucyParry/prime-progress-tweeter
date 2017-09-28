@@ -8,26 +8,38 @@ import re
 
 def get_progress_from_window_title():
     """
-    Runs a simple .bat file to get the details of the prime95.exe application
-    and returns a tuple of the percentage progress and exponent (taken from the 'Window Title')
-    """
-    output= subprocess.Popen(("get_window_name.bat"), stdout=subprocess.PIPE).stdout
+    Runs a simple .bat file (which runs the Windows tasklist command) to get the task title of the prime95.exe process.
+    This contains the current exponent and percentage done, which are return as a tuple if successful
 
+    TODO - find out how to run the vbscript instead - should run the batch file without opening a cmd window
+    """
+    output = None
     win_title = ""
-    for line in output:
-        if "Window Title" in str(line):
-	        win_title = str(line)
-    output.close()
-    status_string = (win_title.split(" - ", 1)[1])
-    percentage = status_string.split(" of ", 1)[0]
-    exponent = status_string.split(" of ", 1)[1]
-    exponent = exponent.split("\\", 1)[0]
-    return (percentage, exponent)
+    try:
+        output = subprocess.Popen(("get_window_name.bat"), stdout=subprocess.PIPE).stdout
+        for line in output:
+            if "Window Title" in str(line):
+                win_title = str(line)
+        if (len(win_title) > 0):  
+            process_title = (win_title.split(" - ", 1)[1])
+            percentage = process_title.split(" of ", 1)[0]
+            exponent = process_title.split(" of ", 1)[1]
+            exponent = exponent.split("\\", 1)[0]
+            return (percentage, exponent)
+        else:
+            raise ValueError()
+    except FileNotFoundError as ex:
+        raise FileNotFoundError('Could not find the batch file get_window_name.bat - Has it been moved or renamed?') from ex
+    except ValueError as ex:
+        raise ValueError('No processes for prime95.exe found - Check the application is running') from ex
+    finally:
+        if not output is None:
+            output.close()
 
 
 def setup_twitter_api():
     """
-    Reads Twitter credentials from .ini file, then sets up and tests authorisation
+    Reads Twitter credentials from .ini file, sets up API as a global variable and tests authorisation
     """
     parser = configparser.ConfigParser()
     try:
@@ -36,20 +48,17 @@ def setup_twitter_api():
         consumer_secret = parser.get('credentials', 'consumer_secret')
         access_token = parser.get('credentials', 'access_token')
         access_secret = parser.get('credentials', 'access_secret')
-    except configparser.NoSectionError as ex:
-        return "ERROR occurred when parsing config settings - " + ex
-    else:
+
         auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
         auth.set_access_token(access_token, access_secret)
         global api
-        api = tweepy.API(auth)
-        try:
-            # test the connection by attempting to get the authorised user          
-            api.me()
-        except Exception as ex:
-            return "ERROR occurred testing API connection - " + ex
-        else:
-            return "OK"
+        api = tweepy.API(auth)                         
+        api.me() # test connection by attempting to get authorised user  
+
+    except configparser.NoSectionError as ex:
+        raise NoSectionError("Couldn't parse the config settings - Check the config.ini file exists and contains the [credentials] section") from ex
+    except tweepy.error.TweepError as ex:
+        raise tweepy.error.TweepError("Tweepy / Twitter API couldn't authenticate - Are your API keys correct in the config.ini file?") from ex 
 
 
 def get_tweet_style():
@@ -100,18 +109,10 @@ def compose_progress_message(percentage, exponentMString):
 
 def integer_to_superscript(integer):
     """
-    Converts each digit of a integer to unicode superscript character
+    Converts each digit of a integer to equivalent unicode superscript character
     """
-    uc_sup_digits_dict = {0: u"\u2070",
-                      1: u"\u00B9",
-                      2: u"\u00B2",
-                      3: u"\u00B3",
-                      4: u"\u2074",
-                      5: u"\u2075",
-                      6: u"\u2076",
-                      7: u"\u2077",
-                      8: u"\u2078",
-                      9: u"\u2079"}
+    uc_sup_digits_dict = {0: u"\u2070", 1: u"\u00B9", 2: u"\u00B2", 3: u"\u00B3", 4: u"\u2074",
+                      5: u"\u2075", 6: u"\u2076", 7: u"\u2077", 8: u"\u2078", 9: u"\u2079"}
     int_string = str(integer)
     superscript = ""
     for i in range(len(int_string)):
@@ -121,7 +122,7 @@ def integer_to_superscript(integer):
 
 def do_progress_update():
     """
-    TODO
+    TODO - Write description, handle exceptions (write to log file...)
     """  
     percentage, current_exponent = get_progress_from_window_title()
     last_tweet_exponent = get_last_tweet_exponent()
