@@ -51,6 +51,7 @@ def setup_twitter_api():
 
         auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
         auth.set_access_token(access_token, access_secret)
+        # TODO - Avoid this global
         global api
         api = tweepy.API(auth)                         
         api.me() # test connection by attempting to get authorised user  
