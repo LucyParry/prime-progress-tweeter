@@ -8,33 +8,34 @@ import re
 
 def get_progress_from_window_title():
     """
-    Runs a simple .bat file (which runs the Windows tasklist command) to get the task title of the prime95.exe process.
-    This contains the current exponent and percentage done, which are return as a tuple if successful
+    Runs a vbscript file (which runs a batch file, which runs the Windows tasklist command) to get the task title of the prime95.exe process.
+    This contains the current exponent and percentage done, which are returned as a tuple if successful.
 
-    TODO - find out how to run the vbscript instead - should run the batch file without opening a cmd window
+    Doing this with the vbscript rather than directly with the batch script avoids having a cmd window pop up every time we do the update, and
+    reading from the process itself means we don't have to fiddle with prime95.exe's files, and make it output to them more frequently 
     """
     output = None
     win_title = ""
+    command = "cscript get_window_name.vbs get_window_name.bat"
     try:
-        output = subprocess.Popen(("get_window_name.bat"), stdout=subprocess.PIPE).stdout
+        output = subprocess.Popen((command), stdout=subprocess.PIPE).stdout
         for line in output:
+            if "Error" in str(line):
+                raise IOError('The script reported the following error: ' + str(line))
             if "Window Title" in str(line):
                 win_title = str(line)
-        if (len(win_title) > 0):  
-            process_title = (win_title.split(" - ", 1)[1])
-            percentage = process_title.split(" of ", 1)[0]
-            exponent = process_title.split(" of ", 1)[1]
-            exponent = exponent.split("\\", 1)[0]
-            return (percentage, exponent)
-        else:
-            raise ValueError()
-    except FileNotFoundError as ex:
-        raise FileNotFoundError('Could not find the batch file get_window_name.bat - Has it been moved or renamed?') from ex
-    except ValueError as ex:
-        raise ValueError('No processes for prime95.exe found - Check the application is running') from ex
     finally:
         if not output is None:
             output.close()
+
+    if (len(win_title) > 0):  
+        process_title = (win_title.split(" - ", 1)[1])
+        percentage = process_title.split(" of ", 1)[0]
+        exponent = process_title.split(" of ", 1)[1]
+        exponent = exponent.split("\\", 1)[0]
+        return (percentage, exponent)
+    else:
+        raise ValueError('No processes for prime95.exe found - Check the application is running')
 
 
 def setup_twitter_api():
@@ -124,10 +125,14 @@ def do_progress_update():
     """
     TODO - Write description, handle exceptions (write to log file...)
     """  
-    percentage, current_exponent = get_progress_from_window_title()
+    try:
+        percentage, current_exponent = get_progress_from_window_title()
+    except Exception as ex:
+        print(ex)
+        # TODO - Add proper chain of exceptions here - Write details to log file
     last_tweet_exponent = get_last_tweet_exponent()
     if last_tweet_exponent != current_exponent:
-        print("beep")
+        print("beep") # TODO - Handle this properly
         # Ooh, we have changed exponents between this check and the last one - Check what the verdict on the last one was first
     message = compose_progress_message(percentage, current_exponent) 
     tweet_message(message)
@@ -135,5 +140,4 @@ def do_progress_update():
 
 if __name__ == '__main__':
     setup_result = setup_twitter_api()
-    if setup_result == "OK":
-        do_progress_update()
+    do_progress_update()
