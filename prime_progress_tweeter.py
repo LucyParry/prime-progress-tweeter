@@ -3,8 +3,9 @@ import csv
 import exclamationator
 import subprocess
 import tweepy
+import datetime
 import re
-
+import os
 
 def get_progress_from_window_title():
     """
@@ -12,7 +13,7 @@ def get_progress_from_window_title():
     This contains the current exponent and percentage done, which are returned as a tuple if successful.
 
     Doing this with the vbscript rather than directly with the batch script avoids having a cmd window pop up every time we do the update, and
-    reading from the process itself means we don't have to fiddle with prime95.exe's files, and make it output to them more frequently 
+    reading from the process itself means we don't have to fiddle with prime95.exe's files, and make prime95 output to them more frequently 
     """
     output = None
     win_title = ""
@@ -24,6 +25,8 @@ def get_progress_from_window_title():
                 raise IOError('The script reported the following error: ' + str(line))
             if "Window Title" in str(line):
                 win_title = str(line)
+    except FileNotFoundError as ex:
+        raise FileNotFoundError('Could not run the script to get the prime95.exe process name') from ex
     finally:
         if not output is None:
             output.close()
@@ -40,7 +43,7 @@ def get_progress_from_window_title():
 
 def setup_twitter_api():
     """
-    Reads Twitter credentials from .ini file, sets up API as a global variable and tests authorisation
+    Reads Twitter credentials from .ini file, sets up Tweepy API object, tests authorisation and returns the object if successful
     """
     parser = configparser.ConfigParser()
     try:
@@ -52,10 +55,9 @@ def setup_twitter_api():
 
         auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
         auth.set_access_token(access_token, access_secret)
-        # TODO - Avoid this global
-        global api
         api = tweepy.API(auth)                         
         api.me() # test connection by attempting to get authorised user  
+        return api
 
     except configparser.NoSectionError as ex:
         raise NoSectionError("Couldn't parse the config settings - Check the config.ini file exists and contains the [credentials] section") from ex
@@ -63,50 +65,62 @@ def setup_twitter_api():
         raise tweepy.error.TweepError("Tweepy / Twitter API couldn't authenticate - Are your API keys correct in the config.ini file?") from ex 
 
 
-def get_tweet_style():
-    """
-    Reads Tweet style from .ini file (whether we want a silly exclamation at the beginning or not)
-    """
-    parser = configparser.ConfigParser()
-    parser.read('config.ini')
-    tweet_style = parser.get('tweet_style', 'excitable')
-    if tweet_style == "True":
-        return True
-    return False
-
-
-def tweet_message(message):
+def tweet_message(api, message):
     """
     Tweet the given message
-    """ 
-    api.update_status(message)
+    """
+    try:
+        api.update_status(message)
+    except tweepy.error.TweepError as ex:
+        raise tweepy.error.TweepError("Tweepy encountered an error when sending the tweet") from ex 
+    
 
-
-def get_last_tweet_exponent():
+def get_last_tweet_exponent(api):
     """
     Get the last tweet from the authorised user
     """
-    last_tweet = api.home_timeline(count = 1)[0]
+    try:
+        last_tweet = api.home_timeline(count = 1)[0]
+    except tweepy.error.TweepError as ex:
+        raise tweepy.error.TweepError("Tweepy encountered an error when accessing the most recent tweet") from ex 
     pattern = re.compile('M[0-9]*')
     match_exponent = pattern.search(last_tweet.text)
     last_tweet_exponent = match_exponent.group()
     return last_tweet_exponent
 
 
+def use_excitable_tweets():
+    """
+    Reads Tweet style from .ini file (whether we want a silly exclamation at the beginning or not)
+    """
+    parser = configparser.ConfigParser()
+    try:
+        parser.read('config.ini')
+        tweet_style = parser.get('tweet_style', 'excitable')
+    except configparser.NoSectionError as ex:
+        raise NoSectionError("Couldn't parse the config settings - Check the config.ini file exists and contains the [credentials] section") from ex
+    if tweet_style == "True":
+        return True
+    return False
+
+
 def compose_progress_message(percentage, exponentMString):
     """
     Build a standard tweet message about the prime progress
     """
-    
-    superscript_exponent = integer_to_superscript(int(exponentMString[1:]))
-    exclamation = ""
-    if get_tweet_style():
-        exclamation = exclamationator.Exclamation()
-    message = exclamation.text + " We're " + percentage + " through calculating whether " + exponentMString + " (2" + superscript_exponent + "-1) is prime!"
-    if len(message) < 140:
-        return message
+    integer_exponent = exponentMString[1:]
+    if not (is_integer(integer_exponent)):
+        raise ValueError('Unable to parse integer from prime95 window title')
     else:
-        compose_message()
+        superscript_exponent = integer_to_superscript(int(integer_exponent))
+        exclamation = ""
+        if use_excitable_tweets():
+            exclamation = exclamationator.Exclamation()
+        message = exclamation.text + " We're " + percentage + " through calculating whether " + exponentMString + " (2" + superscript_exponent + "-1) is prime!"
+        if len(message) < 140:
+            return message
+        else:
+            compose_message(percentage, exponentMString)
 
 
 def integer_to_superscript(integer):
@@ -122,23 +136,47 @@ def integer_to_superscript(integer):
     return superscript
 
 
-def do_progress_update():
+def is_integer(string_integer):
+    try:
+        int(string_integer)
+        return True
+    except ValueError:
+        return False
+
+
+def write_error_to_logfile(message):
+    if os.path.exists('error_log.txt'):
+        with open("error_log.txt", "a") as myfile:
+            myfile.write(str(datetime.datetime.now()) + ' - ' + message + '\n')
+    else:
+        with open("error_log.txt", "w") as myfile:
+            myfile.write(str(datetime.datetime.now()) + ' - ' + message + '\n')
+
+
+def do_progress_update(api):
     """
-    TODO - Write description, handle exceptions (write to log file...)
+    TODO - Write description
     """  
     try:
         percentage, current_exponent = get_progress_from_window_title()
-    except Exception as ex:
-        print(ex)
-        # TODO - Add proper chain of exceptions here - Write details to log file
-    last_tweet_exponent = get_last_tweet_exponent()
-    if last_tweet_exponent != current_exponent:
-        print("beep") # TODO - Handle this properly
-        # Ooh, we have changed exponents between this check and the last one - Check what the verdict on the last one was first
-    message = compose_progress_message(percentage, current_exponent) 
-    tweet_message(message)
-    
+        last_tweet_exponent = get_last_tweet_exponent(api)
+        if last_tweet_exponent != current_exponent:
+            # We have changed exponents between this check and the last one - Check what the verdict on the last one was first
+            do_completed_exponent_update(api)
+        message = compose_progress_message(percentage, current_exponent) 
+        tweet_message(api, message)
+    except (IOError, ValueError, tweepy.TweepError) as ex:
+        write_error_to_logfile(str(ex))
+
+
+def main():
+    try:
+        api = setup_twitter_api()
+    except (configparser.NoSectionError, tweepy.TweepError) as ex:
+        write_error_to_logfile(str(ex))
+    else:
+        do_progress_update(api)
+
 
 if __name__ == '__main__':
-    setup_result = setup_twitter_api()
-    do_progress_update()
+    main()
