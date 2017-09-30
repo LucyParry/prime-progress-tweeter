@@ -18,16 +18,19 @@ class Exclamation:
    """
    An absurd, randomly generated exclamation suitable for excited tweeting
    """
-   def __init__(self):
-      exclamation_starts_list = ["Great", "Holy", "Sweet", "Oh my", "Damn this", "What the", "Bless my"]
-      start, adjective, noun, text = "", "", "", ""
+   def __init__(self, special = False):
+      if special:
+          self.text = get_random_line('wordlists/short_phrases.txt')
+      else:  
+        exclamation_starts_list = ["Great", "Holy", "Sweet", "Oh my", "Damn this", "What the", "Bless my"]
+        start, adjective, noun, text = "", "", "", ""
 
-      self.start = exclamation_starts_list[(random.randrange(0, (len(exclamation_starts_list))))]
-      self.adjective = get_random_line('wordlists/adjectives.txt')
-      self.noun = get_random_line('wordlists/nouns.txt')
-      self.text = self.start + " " + self.adjective + " " + self.noun + "!"
-      if self.start == "What the":
-         self.text += "?"
+        self.start = exclamation_starts_list[(random.randrange(0, (len(exclamation_starts_list))))]
+        self.adjective = get_random_line('wordlists/adjectives.txt')
+        self.noun = get_random_line('wordlists/nouns.txt')
+        self.text = self.start + " " + self.adjective + " " + self.noun + "!"
+        if self.start == "What the":
+            self.text += "?"
 
 
 

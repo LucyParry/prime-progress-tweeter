@@ -120,7 +120,26 @@ def compose_progress_message(percentage, exponentMString):
         if len(message) < 140:
             return message
         else:
-            compose_message(percentage, exponentMString)
+            compose_progress_message(percentage, exponentMString)
+
+
+def compose_result_message(resultString, completed_exponent):
+    """
+    Build a message about the result of an exponent 
+    """
+    integer_exponent = completed_exponent[1:]
+    if not (is_integer(integer_exponent)):
+        raise ValueError('Unable to parse integer from prime95 window title')
+    else:
+        superscript_exponent = integer_to_superscript(int(integer_exponent))
+        exclamation = ""
+        if use_excitable_tweets():
+            exclamation = exclamationator.Exclamation(True)
+            message = exclamation.text + " It turns out that" + " (2" + superscript_exponent + "-1) " + resultString + "!"
+            if len(message) < 140:
+                return message
+            else:
+                compose_result_message(percentage, exponentMString)
 
 
 def integer_to_superscript(integer):
@@ -161,12 +180,35 @@ def do_progress_update(api):
         percentage, current_exponent = get_progress_from_window_title()
         last_tweet_exponent = get_last_tweet_exponent(api)
         if last_tweet_exponent != current_exponent:
-            # We have changed exponents between this check and the last one - Check what the verdict on the last one was first
-            do_completed_exponent_update(api)
+            # We have changed exponents between this check and the last one - Check what the verdict on the last one was instead
+            do_completed_exponent_update(api, last_tweet_exponent)      
         message = compose_progress_message(percentage, current_exponent) 
-        tweet_message(api, message)
+        tweet_message(api, message)       
     except (IOError, ValueError, tweepy.TweepError) as ex:
         write_error_to_logfile(str(ex))
+
+
+def do_completed_exponent_update(api, completed_exponent):
+    """
+
+    """
+    parser = configparser.ConfigParser()
+    try:
+        parser.read('config.ini')
+        results_path = parser.get('prime95_location', 'path')
+        exponent_result = ""
+        with open(results_path) as file:
+            for line in file:
+                if completed_exponent in str(line):
+                    exponent_result = line
+
+        if len(exponent_result) > 0:
+            exponent_result = (exponent_result.split(".")[0]).split(",")[1]
+            message = compose_result_message(exponent_result, completed_exponent)
+            tweet_message(api, message)
+
+    except configparser.NoSectionError as ex:
+        raise NoSectionError("Couldn't parse the config settings - Check the config.ini file exists and contains the [credentials] section") from ex
 
 
 def main():
@@ -179,4 +221,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+   main()
