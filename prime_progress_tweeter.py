@@ -58,11 +58,10 @@ def setup_twitter_api():
         api = tweepy.API(auth)                         
         api.me() # test connection by attempting to get authorised user  
         return api
-
     except configparser.NoSectionError as ex:
         raise NoSectionError("Couldn't parse the config settings - Check the config.ini file exists and contains the [credentials] section") from ex
-    except tweepy.error.TweepError as ex:
-        raise tweepy.error.TweepError("Tweepy / Twitter API couldn't authenticate - Are your API keys correct in the config.ini file?") from ex 
+    except tweepy.error.TweepError as ex:   # If the machine isn't online, just let Tweepy return the error
+        raise tweepy.error.TweepError("Tweepy / Twitter API couldn't authenticate - Are you connected to the internet and are your API keys correct in the config.ini file?") from ex 
 
 
 def tweet_message(api, message):
