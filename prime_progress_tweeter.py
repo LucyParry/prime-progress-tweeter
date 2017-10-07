@@ -7,6 +7,63 @@ import datetime
 import re
 import os
 
+class AppSettings:
+    """
+    """
+    def __init__(self):
+        parser = configparser.ConfigParser()
+        try:
+            parser.read('config.ini')
+            self.consumer_key = parser.get('credentials', 'consumer_key')
+            self.consumer_secret = parser.get('credentials', 'consumer_secret')
+            self.access_token = parser.get('credentials', 'access_token')
+            self.access_secret = parser.get('credentials', 'access_secret')
+            self.tweets_are_excitable = parser.get('tweet_style', 'excitable')
+            self.tweet_frequency_minutes = parser.get('tweet_frequency', 'per_minutes')
+            self.prime95_path = parser.get('prime95_location', 'path')
+        except configparser.NoSectionError as ex:
+            raise NoSectionError("Couldn't parse the config settings - Check the config.ini file exists and contains the [credentials] section") from ex
+
+
+    def set_config_values(consumer_key, consumer_secret, access_token, access_secret, excitable, per_minutes, path):
+        parser = configparser.ConfigParser()
+        try:
+            parser.read('config.ini')
+            parser.set('credentials', 'consumer_key', consumer_key)
+            parser.set('credentials', 'consumer_secret', consumer_secret)
+            parser.set('credentials', 'access_token', access_token)
+            parser.set('credentials', 'access_secret', access_secret)
+            parser.set('tweet_style', 'excitable', excitable)
+            parser.set('tweet_frequency', 'per_minutes', per_minutes)
+            parser.set('prime95_location', 'path', path)
+
+            self.consumer_key = parser.get('credentials', 'consumer_key')
+            self.consumer_secret = parser.get('credentials', 'consumer_secret')
+            self.access_token = parser.get('credentials', 'access_token')
+            self.access_secret = parser.get('credentials', 'access_secret')
+            self.tweets_are_excitable = parser.get('tweet_style', 'excitable')
+            self.tweet_frequency_minutes = parser.get('tweet_frequency', 'per_minutes')
+            self.prime95_path = parser.get('prime95_location', 'path')
+            get_config_values()
+        except configparser.NoSectionError as ex:
+            raise NoSectionError("") from ex
+
+
+    def get_config_values(self):
+        parser = configparser.ConfigParser()
+        try:
+            self.consumer_key = parser.get('credentials', 'consumer_key')
+            self.consumer_secret = parser.get('credentials', 'consumer_secret')
+            self.access_token = parser.get('credentials', 'access_token')
+            self.access_secret = parser.get('credentials', 'access_secret')
+            self.tweets_are_excitable = parser.get('tweet_style', 'excitable')
+            self.tweet_frequency_minutes = parser.get('tweet_frequency', 'per_minutes')
+            self.prime95_path = parser.get('prime95_location', 'path')
+            return self
+        except configparser.NoSectionError as ex:
+            raise configparser.NoSectionError("") from ex
+
+
 def get_progress_from_window_title():
     """
     Runs a vbscript file (which runs a batch file, which runs the Windows tasklist command) to get the task title of the prime95.exe process.
@@ -41,25 +98,16 @@ def get_progress_from_window_title():
         raise ValueError('No processes for prime95.exe found - Check the application is running')
 
 
-def setup_twitter_api():
+def setup_twitter_api(app_settings):
     """
-    Reads Twitter credentials from .ini file, sets up Tweepy API object, tests authorisation and returns the object if successful
+    Sets up Tweepy API object, tests authorisation and returns the object if successful
     """
-    parser = configparser.ConfigParser()
     try:
-        parser.read('config.ini')
-        consumer_key = parser.get('credentials', 'consumer_key')
-        consumer_secret = parser.get('credentials', 'consumer_secret')
-        access_token = parser.get('credentials', 'access_token')
-        access_secret = parser.get('credentials', 'access_secret')
-
-        auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-        auth.set_access_token(access_token, access_secret)
+        auth = tweepy.OAuthHandler(app_settings.consumer_key, app_settings.consumer_secret)
+        auth.set_access_token(app_settings.access_token, app_settings.access_secret)
         api = tweepy.API(auth)                         
         api.me() # test connection by attempting to get authorised user  
-        return api
-    except configparser.NoSectionError as ex:
-        raise NoSectionError("Couldn't parse the config settings - Check the config.ini file exists and contains the [credentials] section") from ex
+        return api  
     except tweepy.error.TweepError as ex:   # If the machine isn't online, just let Tweepy return the error
         raise tweepy.error.TweepError("Tweepy / Twitter API couldn't authenticate - Are you connected to the internet and are your API keys correct in the config.ini file?") from ex 
 
@@ -88,22 +136,7 @@ def get_last_tweet_exponent(api):
     return last_tweet_exponent
 
 
-def use_excitable_tweets():
-    """
-    Reads Tweet style from .ini file (whether we want a silly exclamation at the beginning or not)
-    """
-    parser = configparser.ConfigParser()
-    try:
-        parser.read('config.ini')
-        tweet_style = parser.get('tweet_style', 'excitable')
-    except configparser.NoSectionError as ex:
-        raise NoSectionError("Couldn't parse the config settings - Check the config.ini file exists and contains the [credentials] section") from ex
-    if tweet_style == "True":
-        return True
-    return False
-
-
-def compose_progress_message(percentage, exponentMString):
+def compose_progress_message(app_settings, percentage, exponentMString):
     """
     Build a standard tweet message about the prime progress
     """
@@ -113,7 +146,7 @@ def compose_progress_message(percentage, exponentMString):
     else:
         superscript_exponent = integer_to_superscript(int(integer_exponent))
         exclamation = ""
-        if use_excitable_tweets():
+        if app_settings.tweets_are_excitable:
             exclamation = exclamationator.Exclamation()
         message = exclamation.text + " We're " + percentage + " through calculating whether " + exponentMString + " (2" + superscript_exponent + "-1) is prime!"
         if len(message) < 140:
@@ -171,7 +204,7 @@ def write_error_to_logfile(message):
             myfile.write(str(datetime.datetime.now()) + ' - ' + message + '\n')
 
 
-def do_progress_update(api):
+def do_progress_update(app_settings, api):
     """
     TODO - Write description
     """  
@@ -180,21 +213,20 @@ def do_progress_update(api):
         last_tweet_exponent = get_last_tweet_exponent(api)
         if last_tweet_exponent != current_exponent:
             # We have changed exponents between this check and the last one - Check what the verdict on the last one was instead
-            do_completed_exponent_update(api, last_tweet_exponent)      
-        message = compose_progress_message(percentage, current_exponent) 
+            do_completed_exponent_update(app_settings, api, last_tweet_exponent)      
+        message = compose_progress_message(app_settings, percentage, current_exponent) 
         tweet_message(api, message)       
     except (IOError, ValueError, tweepy.TweepError) as ex:
         write_error_to_logfile(str(ex))
 
 
-def do_completed_exponent_update(api, completed_exponent):
+def do_completed_exponent_update(app_settings, api, completed_exponent):
     """
 
     """
-    parser = configparser.ConfigParser()
+    # TODO - error handling
     try:
-        parser.read('config.ini')
-        results_path = parser.get('prime95_location', 'path')
+        results_path = app_settings.prime95_path
         exponent_result = ""
         with open(results_path) as file:
             for line in file:
@@ -212,11 +244,12 @@ def do_completed_exponent_update(api, completed_exponent):
 
 def main():
     try:
-        api = setup_twitter_api()
+        app_settings = AppSettings()
+        api = setup_twitter_api(app_settings)
     except (configparser.NoSectionError, tweepy.TweepError) as ex:
         write_error_to_logfile(str(ex))
     else:
-        do_progress_update(api)
+        do_progress_update(app_settings, api)
 
 
 if __name__ == '__main__':
