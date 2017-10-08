@@ -1,5 +1,7 @@
-import prime_progress_tweeter
 from tkinter import *
+
+import prime_progress_tweeter
+import application_settings
 
 class PrimeTweeterGui(Frame):
   
@@ -15,6 +17,8 @@ class PrimeTweeterGui(Frame):
         background_theme = "white"
         entry_bkg_theme = "gray95"
         self.configure(background = background_theme)
+        
+        app_settings = application_settings.AppSettings()
 
         image_frame = Frame(self, background = background_theme)
         image_frame.pack(fill=X)
@@ -33,29 +37,37 @@ class PrimeTweeterGui(Frame):
         consumer_key_frame = Frame(self, background = background_theme)
         consumer_key_frame.pack(fill=X)        
         consumer_key_label = Label(consumer_key_frame, text="Consumer Key", width=15, justify=RIGHT, font=("Helvetica", 11, "bold"), anchor=W, background = background_theme)
-        consumer_key_label.pack(side=LEFT, padx=5, pady=5)      
-        consumer_key_entry = Entry(consumer_key_frame, background = entry_bkg_theme, font=("Helvetica", 11))
+        consumer_key_label.pack(side=LEFT, padx=5, pady=5)
+        consumer_key_entry_var = StringVar()
+        consumer_key_entry_var.set(app_settings.consumer_key)
+        consumer_key_entry = Entry(consumer_key_frame, background = entry_bkg_theme, font=("Helvetica", 11), textvariable=consumer_key_entry_var)
         consumer_key_entry.pack(fill=X, padx=5, expand=True)
 
         consumer_secret_frame = Frame(self, background = background_theme)
         consumer_secret_frame.pack(fill=X)        
         consumer_secret_label = Label(consumer_secret_frame, text="Consumer Secret", width=15, justify=RIGHT, font=("Helvetica", 11, "bold"), anchor=W, background = background_theme)
-        consumer_secret_label.pack(side=LEFT, padx=5, pady=5)      
-        consumer_secret_entry = Entry(consumer_secret_frame, background = entry_bkg_theme, font=("Helvetica", 11))
+        consumer_secret_label.pack(side=LEFT, padx=5, pady=5)
+        consumer_secret_entry_var = StringVar()
+        consumer_secret_entry_var.set(app_settings.consumer_secret)       
+        consumer_secret_entry = Entry(consumer_secret_frame, background = entry_bkg_theme, font=("Helvetica", 11), textvariable=consumer_secret_entry_var)
         consumer_secret_entry.pack(fill=X, padx=5, expand=True)
         
         access_token_frame = Frame(self, background = background_theme)
         access_token_frame.pack(fill=X)        
         access_token_label = Label(access_token_frame, text="Access Token", width=15, justify=RIGHT, font=("Helvetica", 11, "bold"), anchor=W, background = background_theme)
-        access_token_label.pack(side=LEFT, padx=5, pady=5)      
-        access_token_entry = Entry(access_token_frame, background = entry_bkg_theme, font=("Helvetica", 11))
+        access_token_label.pack(side=LEFT, padx=5, pady=5)
+        access_token_entry_var = StringVar()
+        access_token_entry_var.set(app_settings.access_token) 
+        access_token_entry = Entry(access_token_frame, background = entry_bkg_theme, font=("Helvetica", 11), textvariable=access_token_entry_var)
         access_token_entry.pack(fill=X, padx=5, expand=True)
         
         access_secret_frame = Frame(self, background = background_theme)
         access_secret_frame.pack(fill=X)        
         access_secret_label = Label(access_secret_frame, text="Access Secret", width=15, justify=RIGHT, font=("Helvetica", 11, "bold"), anchor=W, background = background_theme)
-        access_secret_label.pack(side=LEFT, padx=5, pady=5)      
-        access_secret_entry = Entry(access_secret_frame, background = entry_bkg_theme, font=("Helvetica", 11))
+        access_secret_label.pack(side=LEFT, padx=5, pady=5)
+        access_secret_entry_var = StringVar()
+        access_secret_entry_var.set(app_settings.access_secret)        
+        access_secret_entry = Entry(access_secret_frame, background = entry_bkg_theme, font=("Helvetica", 11), textvariable=access_secret_entry_var)
         access_secret_entry.pack(fill=X, padx=5, expand=True)
 
         preferences_frame = Frame(self, background = background_theme)
