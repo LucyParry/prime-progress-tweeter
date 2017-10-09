@@ -18,57 +18,59 @@ class PrimeTweeterGui(Frame):
         entry_bkg_theme = "gray95"
         self.configure(background = background_theme)
         
+        def get_frame(parent):
+            frame = Frame(parent, background = background_theme)
+            frame.pack(fill=X)
+            return frame
+
+        def get_label(parent, label_text):
+            label = Label(parent, text=label_text, width=15, justify=RIGHT, font=("Helvetica", 11, "bold"), anchor=W, background = background_theme)
+            label.pack(side=LEFT, padx=5, pady=5)
+            return label
+
+        def get_string_entry_variable(value):
+            entry_var = StringVar()
+            entry_var.set(value)
+            return entry_var
+
+        def get_string_entry(parent, variable):
+            entry = Entry(parent, background = entry_bkg_theme, font=("Helvetica", 11), textvariable=variable)
+            entry.pack(fill=X, padx=5, expand=True)
+            return entry
+
         app_settings = application_settings.AppSettings()
 
-        image_frame = Frame(self, background = background_theme)
-        image_frame.pack(fill=X)
+        image_frame = get_frame(self)
 
         image_gif = PhotoImage(file="assets/hen-311285_640.gif")
         image_label = Label(image_frame, image=image_gif, borderwidth=0)
         image_label.image = image_gif
         image_label.pack(padx=5, pady=5)
 
-        intro_frame = Frame(self, background = background_theme)
-        intro_frame.pack(fill=X)
+        intro_frame = get_frame(self)
         intro_text = "Enter your Twitter API credentials below"
         intro_label = Label(intro_frame, text=intro_text, font=("Helvetica", 12, "bold"), justify=CENTER, background = background_theme)
         intro_label.pack(padx=10, pady=5)
-      
-        consumer_key_frame = Frame(self, background = background_theme)
-        consumer_key_frame.pack(fill=X)        
-        consumer_key_label = Label(consumer_key_frame, text="Consumer Key", width=15, justify=RIGHT, font=("Helvetica", 11, "bold"), anchor=W, background = background_theme)
-        consumer_key_label.pack(side=LEFT, padx=5, pady=5)
-        consumer_key_entry_var = StringVar()
-        consumer_key_entry_var.set(app_settings.consumer_key)
-        consumer_key_entry = Entry(consumer_key_frame, background = entry_bkg_theme, font=("Helvetica", 11), textvariable=consumer_key_entry_var)
-        consumer_key_entry.pack(fill=X, padx=5, expand=True)
+            
+        consumer_key_frame = get_frame(self)
+        consumer_key_label = get_label(consumer_key_frame, "Consumer Key")
+        consumer_key_entry_var = get_string_entry_variable(app_settings.consumer_key)
+        consumer_key_entry = get_string_entry(consumer_key_frame, consumer_key_entry_var)
 
-        consumer_secret_frame = Frame(self, background = background_theme)
-        consumer_secret_frame.pack(fill=X)        
-        consumer_secret_label = Label(consumer_secret_frame, text="Consumer Secret", width=15, justify=RIGHT, font=("Helvetica", 11, "bold"), anchor=W, background = background_theme)
-        consumer_secret_label.pack(side=LEFT, padx=5, pady=5)
-        consumer_secret_entry_var = StringVar()
-        consumer_secret_entry_var.set(app_settings.consumer_secret)       
-        consumer_secret_entry = Entry(consumer_secret_frame, background = entry_bkg_theme, font=("Helvetica", 11), textvariable=consumer_secret_entry_var)
-        consumer_secret_entry.pack(fill=X, padx=5, expand=True)
+        consumer_secret_frame = get_frame(self)    
+        consumer_secret_label = get_label(consumer_secret_frame, "Consumer Secret")
+        consumer_secret_entry_var = get_string_entry_variable(app_settings.consumer_secret)       
+        consumer_secret_entry = get_string_entry(consumer_secret_frame, consumer_secret_entry_var)
         
-        access_token_frame = Frame(self, background = background_theme)
-        access_token_frame.pack(fill=X)        
-        access_token_label = Label(access_token_frame, text="Access Token", width=15, justify=RIGHT, font=("Helvetica", 11, "bold"), anchor=W, background = background_theme)
-        access_token_label.pack(side=LEFT, padx=5, pady=5)
-        access_token_entry_var = StringVar()
-        access_token_entry_var.set(app_settings.access_token) 
-        access_token_entry = Entry(access_token_frame, background = entry_bkg_theme, font=("Helvetica", 11), textvariable=access_token_entry_var)
-        access_token_entry.pack(fill=X, padx=5, expand=True)
+        access_token_frame = get_frame(self)      
+        access_token_label = get_label(access_token_frame, "Access Token")
+        access_token_entry_var = get_string_entry_variable(app_settings.access_token) 
+        access_token_entry = get_string_entry(access_token_frame, access_token_entry_var)
         
-        access_secret_frame = Frame(self, background = background_theme)
-        access_secret_frame.pack(fill=X)        
-        access_secret_label = Label(access_secret_frame, text="Access Secret", width=15, justify=RIGHT, font=("Helvetica", 11, "bold"), anchor=W, background = background_theme)
-        access_secret_label.pack(side=LEFT, padx=5, pady=5)
-        access_secret_entry_var = StringVar()
-        access_secret_entry_var.set(app_settings.access_secret)        
-        access_secret_entry = Entry(access_secret_frame, background = entry_bkg_theme, font=("Helvetica", 11), textvariable=access_secret_entry_var)
-        access_secret_entry.pack(fill=X, padx=5, expand=True)
+        access_secret_frame = get_frame(self)    
+        access_secret_label = get_label(access_secret_frame, "Access Secret")
+        access_secret_entry_var = get_string_entry_variable(app_settings.access_secret)        
+        access_secret_entry = get_string_entry(access_secret_frame, access_secret_entry_var)
 
         preferences_frame = Frame(self, background = background_theme)
         preferences_frame.pack(fill=X, pady=5)
@@ -76,31 +78,30 @@ class PrimeTweeterGui(Frame):
         preferences_label = Label(preferences_frame, text=preferences_text, font=("Helvetica", 12, "bold"), justify=CENTER, background = background_theme)
         preferences_label.pack(padx=10, pady=5)
 
-        tweet_style_frame = Frame(self, background = background_theme)
-        tweet_style_frame.pack(fill=X)
+        tweet_style_frame = get_frame(self)
         value_tweet_style = IntVar()
-        value_tweet_style.set(1)
-        tweet_style_label = Label(tweet_style_frame, text="Tweet style", width=15, justify=RIGHT, font=("Helvetica", 11, "bold"), anchor=W, background = background_theme)
-        tweet_style_label.pack(side=LEFT, padx=5, pady=5)  
+        tweet_style_label = get_label(tweet_style_frame, "Tweet style")
         Radiobutton(tweet_style_frame, text="Excitable", padx = 10, variable=value_tweet_style, font=("Helvetica", 10), value=1, background = background_theme).pack(side=LEFT)
         Radiobutton(tweet_style_frame, text="Just the facts", padx = 10, variable=value_tweet_style, font=("Helvetica", 10), value=2, background = background_theme).pack(side=LEFT)
 
-        tweet_frequency_frame = Frame(self, background = background_theme)
-        tweet_frequency_frame.pack(fill=X)
-        tweet_frequency_label = Label(tweet_frequency_frame, text="Tweet every", width=15, justify=RIGHT, font=("Helvetica", 11, "bold"), anchor=W, background = background_theme)
-        tweet_frequency_label.pack(side=LEFT, padx=5, pady=10)
+        tweet_frequency_frame = get_frame(self)
+        tweet_frequency_label = get_label(tweet_frequency_frame, "Tweet every")
         value_tweet_frequency = IntVar()
-        value_tweet_frequency.set(1) 
-        Radiobutton(tweet_frequency_frame, text="Hour", padx = 10, variable=value_tweet_style, font=("Helvetica", 10), value=1, background = background_theme).pack(side=LEFT)
-        Radiobutton(tweet_frequency_frame, text="3 hours", padx = 10, variable=value_tweet_style, font=("Helvetica", 10), value=2, background = background_theme).pack(side=LEFT)
-        Radiobutton(tweet_frequency_frame, text="6 hours", padx = 10, variable=value_tweet_style, font=("Helvetica", 10), value=2, background = background_theme).pack(side=LEFT)
-        Radiobutton(tweet_frequency_frame, text="12 hours", padx = 10, variable=value_tweet_style, font=("Helvetica", 10), value=2, background = background_theme).pack(side=LEFT)
-        Radiobutton(tweet_frequency_frame, text="Day", padx = 10, variable=value_tweet_style, value=2, font=("Helvetica", 10), background = background_theme).pack(side=LEFT)
+        radio_labels = ["Hour", "3 hours", "6 hours", "12 hours", "Day"]
+        for label in radio_labels:
+            Radiobutton(tweet_frequency_frame, text=label, padx = 10, variable=value_tweet_frequency, font=("Helvetica", 10), value=label.index, background = background_theme).pack(side=LEFT)
 
         save_test_frame = Frame(self, background = background_theme)
         save_test_frame.pack(fill=X, pady=10, padx=150)
 
-        save_button = Button(save_test_frame, font=("Helvetica", 11), text="Save", width=15)
+        def update_settings():
+            consumer_key = consumer_key_entry.get()
+            consumer_secret = consumer_secret_entry.get()
+            access_token = access_token_entry.get()
+            access_secret = access_secret_entry.get()
+            app_settings.set_config_values(consumer_key, consumer_secret, access_token, access_secret, "", "", "")
+
+        save_button = Button(save_test_frame, font=("Helvetica", 11), text="Save", width=15, command=update_settings)
         save_button.pack(side=LEFT, padx=5, pady=5)
 
         test_button = Button(save_test_frame, font=("Helvetica", 11), text="Test tweet", width=15)
