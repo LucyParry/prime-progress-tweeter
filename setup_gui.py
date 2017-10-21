@@ -17,7 +17,19 @@ class PrimeTweeterGui(Frame):
         background_theme = "white"
         entry_bkg_theme = "gray95"
         self.configure(background = background_theme)
-        
+
+        app_settings = application_settings.AppSettings()
+
+        tweet_styles_dict = app_settings.style_options_dict
+        self.tweet_style_variable = StringVar()
+        tweet_style_current = [name for (name, val) in tweet_styles_dict.items() if val == app_settings.tweets_are_excitable]
+        self.tweet_style_variable.set(tweet_style_current[0])
+
+        frequency_dict = app_settings.frequency_options_dict
+        self.tweet_frequency_variable = StringVar()
+        tweet_freq_current = [name for (name, val) in frequency_dict.items() if val == app_settings.tweet_frequency]
+        self.tweet_frequency_variable.set(tweet_freq_current[0])
+      
         def get_frame(parent):
             frame = Frame(parent, background = background_theme)
             frame.pack(fill=X)
@@ -38,8 +50,7 @@ class PrimeTweeterGui(Frame):
             entry.pack(fill=X, padx=5, expand=True)
             return entry
 
-        app_settings = application_settings.AppSettings()
-
+        
         image_frame = get_frame(self)
 
         image_gif = PhotoImage(file="assets/hen-311285_640.gif")
@@ -79,17 +90,15 @@ class PrimeTweeterGui(Frame):
         preferences_label.pack(padx=10, pady=5)
 
         tweet_style_frame = get_frame(self)
-        value_tweet_style = IntVar()
         tweet_style_label = get_label(tweet_style_frame, "Tweet style")
-        Radiobutton(tweet_style_frame, text="Excitable", padx = 10, variable=value_tweet_style, font=("Helvetica", 10), value=1, background = background_theme).pack(side=LEFT)
-        Radiobutton(tweet_style_frame, text="Just the facts", padx = 10, variable=value_tweet_style, font=("Helvetica", 10), value=2, background = background_theme).pack(side=LEFT)
+        for item in tweet_styles_dict:
+            Radiobutton(tweet_style_frame, text=item, padx = 10, variable=self.tweet_style_variable, value=[name for (name, val) in tweet_styles_dict.items() if name == item], font=("Helvetica", 10), background = background_theme).pack(side=LEFT)
 
         tweet_frequency_frame = get_frame(self)
         tweet_frequency_label = get_label(tweet_frequency_frame, "Tweet every")
-        value_tweet_frequency = IntVar()
-        radio_labels = ["Hour", "3 hours", "6 hours", "12 hours", "Day"]
-        for label in radio_labels:
-            Radiobutton(tweet_frequency_frame, text=label, padx = 10, variable=value_tweet_frequency, font=("Helvetica", 10), value=label.index, background = background_theme).pack(side=LEFT)
+
+        for item in frequency_dict:
+            Radiobutton(tweet_frequency_frame, text=item, padx = 10, variable=self.tweet_frequency_variable, font=("Helvetica", 10), value=[name for (name, val) in frequency_dict.items() if name == item], background = background_theme).pack(side=LEFT)
 
         save_test_frame = Frame(self, background = background_theme)
         save_test_frame.pack(fill=X, pady=10, padx=150)
@@ -99,7 +108,13 @@ class PrimeTweeterGui(Frame):
             consumer_secret = consumer_secret_entry.get()
             access_token = access_token_entry.get()
             access_secret = access_secret_entry.get()
-            app_settings.set_config_values(consumer_key, consumer_secret, access_token, access_secret, "", "", "")
+            tweet_style_selected = self.tweet_style_variable.get()
+            tweet_frequency_selected = self.tweet_frequency_variable.get()
+
+            tweet_style = [val for (name, val) in tweet_styles_dict.items() if name == tweet_style_selected]
+            tweet_frequency = [val for (name, val) in frequency_dict.items() if name == tweet_frequency_selected]
+
+            app_settings.set_config_values(consumer_key, consumer_secret, access_token, access_secret, tweet_style, tweet_frequency, "")
 
         save_button = Button(save_test_frame, font=("Helvetica", 11), text="Save", width=15, command=update_settings)
         save_button.pack(side=LEFT, padx=5, pady=5)
