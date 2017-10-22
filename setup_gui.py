@@ -20,15 +20,13 @@ class PrimeTweeterGui(Frame):
 
         app_settings = application_settings.AppSettings()
 
-        tweet_styles_dict = app_settings.style_options_dict
         self.tweet_style_variable = StringVar()
-        tweet_style_current = [name for (name, val) in tweet_styles_dict.items() if val == app_settings.tweets_are_excitable]
-        self.tweet_style_variable.set(tweet_style_current[0])
+        #tweet_style_current = [name for (name, val) in tweet_styles_dict.items() if val == app_settings.tweets_are_excitable]
+        self.tweet_style_variable.set(app_settings.tweets_are_excitable)
 
-        frequency_dict = app_settings.frequency_options_dict
         self.tweet_frequency_variable = StringVar()
-        tweet_freq_current = [name for (name, val) in frequency_dict.items() if val == app_settings.tweet_frequency]
-        self.tweet_frequency_variable.set(tweet_freq_current[0])
+        #tweet_freq_current = [name for (name, val) in frequency_dict.items() if val == app_settings.tweet_frequency]
+        self.tweet_frequency_variable.set(app_settings.tweet_frequency)
       
         def get_frame(parent):
             frame = Frame(parent, background = background_theme)
@@ -91,14 +89,16 @@ class PrimeTweeterGui(Frame):
 
         tweet_style_frame = get_frame(self)
         tweet_style_label = get_label(tweet_style_frame, "Tweet style")
-        for item in tweet_styles_dict:
-            Radiobutton(tweet_style_frame, text=item, padx = 10, variable=self.tweet_style_variable, value=[name for (name, val) in tweet_styles_dict.items() if name == item], font=("Helvetica", 10), background = background_theme).pack(side=LEFT)
+        for item in app_settings.style_options_dict.items():
+            Radiobutton(tweet_style_frame, text=item[0], padx = 10, font=("Helvetica", 10), background = background_theme, 
+                        variable=self.tweet_style_variable, value=item[1]).pack(side=LEFT)
 
         tweet_frequency_frame = get_frame(self)
         tweet_frequency_label = get_label(tweet_frequency_frame, "Tweet every")
 
-        for item in frequency_dict:
-            Radiobutton(tweet_frequency_frame, text=item, padx = 10, variable=self.tweet_frequency_variable, font=("Helvetica", 10), value=[name for (name, val) in frequency_dict.items() if name == item], background = background_theme).pack(side=LEFT)
+        for item in app_settings.frequency_options_dict.items():
+            Radiobutton(tweet_frequency_frame, text=item[0], padx = 10, font=("Helvetica", 10), background = background_theme, 
+                        variable=self.tweet_frequency_variable, value=item[1]).pack(side=LEFT)
 
         save_test_frame = Frame(self, background = background_theme)
         save_test_frame.pack(fill=X, pady=10, padx=150)
@@ -108,11 +108,8 @@ class PrimeTweeterGui(Frame):
             consumer_secret = consumer_secret_entry.get()
             access_token = access_token_entry.get()
             access_secret = access_secret_entry.get()
-            tweet_style_selected = self.tweet_style_variable.get()
-            tweet_frequency_selected = self.tweet_frequency_variable.get()
-
-            tweet_style = [val for (name, val) in tweet_styles_dict.items() if name == tweet_style_selected]
-            tweet_frequency = [val for (name, val) in frequency_dict.items() if name == tweet_frequency_selected]
+            tweet_style = self.tweet_style_variable.get()
+            tweet_frequency = self.tweet_frequency_variable.get()
 
             app_settings.set_config_values(consumer_key, consumer_secret, access_token, access_secret, tweet_style, tweet_frequency, "")
 
