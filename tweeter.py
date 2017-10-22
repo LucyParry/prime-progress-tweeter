@@ -1,5 +1,4 @@
 import configparser
-import csv
 import datetime
 import os
 import re
@@ -8,33 +7,7 @@ import tweepy
 
 import application_settings
 import exclamationator
-
-
-def get_progress_from_window_title():
-    """
-    Runs a vbscript file (which runs a batch file, which runs the Windows tasklist command) to get the task title of the prime95.exe process.
-    This contains the current exponent and percentage done, which are returned as a tuple if successful.
-    Reading from the process title means we don't have to fiddle with prime95.exe's files, and make prime95 output to them more frequently.
-    """
-    win_title = ""
-    # Windows cmd command to get the running task list
-    command = 'tasklist /v /fi "IMAGENAME eq prime95.exe" /fo LIST'
-    output = subprocess.Popen((command), stdout=subprocess.PIPE).stdout
-    output = tuple(output)
-    for line in output:
-        if "Error" in str(line):
-            raise IOError('The script reported the following error: ' + str(line))
-        if "Window Title" in str(line):
-            win_title = str(line)
-
-    if (len(win_title) > 0):  
-        process_title = (win_title.split(" - ", 1)[1])
-        percentage = process_title.split(" of ", 1)[0]
-        exponent = process_title.split(" of ", 1)[1]
-        exponent = exponent.split("\\", 1)[0]
-        return (percentage, exponent)
-    else:
-        raise ValueError('No processes for prime95.exe found - Check the application is running')
+import progress_finder
 
 
 def setup_twitter_api(app_settings):
@@ -148,14 +121,15 @@ def do_progress_update(app_settings, api):
     TODO - Write description
     """  
     try:
-        percentage, current_exponent = get_progress_from_window_title()
+        progress_finder_obj = progress_finder.ProgressFinder()
+        percentage, current_exponent = progress_finder_obj.get_progress_from_window_title()
         last_tweet_exponent = get_last_tweet_exponent(api)
         if last_tweet_exponent != current_exponent:
             # We have changed exponents between this check and the last one - Check what the verdict on the last one was instead
             do_completed_exponent_update(app_settings, api, last_tweet_exponent)      
         message = compose_progress_message(app_settings, percentage, current_exponent) 
         tweet_message(api, message)       
-    except (IOError, ValueError, tweepy.TweepError) as ex:
+    except (IOError, ValueError, NotImplementedError, tweepy.TweepError) as ex:
         write_error_to_logfile(str(ex))
 
 

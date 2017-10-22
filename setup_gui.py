@@ -1,7 +1,7 @@
 from tkinter import *
 
-import prime_progress_tweeter
 import application_settings
+import tweeter
 
 class PrimeTweeterGui(Frame):
   
