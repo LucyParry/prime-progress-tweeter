@@ -14,25 +14,18 @@ def get_progress_from_window_title():
     """
     Runs a vbscript file (which runs a batch file, which runs the Windows tasklist command) to get the task title of the prime95.exe process.
     This contains the current exponent and percentage done, which are returned as a tuple if successful.
-
-    Doing this with the vbscript rather than directly with the batch script avoids having a cmd window pop up every time we do the update, and
-    reading from the process itself means we don't have to fiddle with prime95.exe's files, and make prime95 output to them more frequently 
+    Reading from the process title means we don't have to fiddle with prime95.exe's files, and make prime95 output to them more frequently.
     """
-    output = None
     win_title = ""
-    command = "cscript get_window_name.vbs get_window_name.bat"
-    try:
-        output = subprocess.Popen((command), stdout=subprocess.PIPE).stdout
-        for line in output:
-            if "Error" in str(line):
-                raise IOError('The script reported the following error: ' + str(line))
-            if "Window Title" in str(line):
-                win_title = str(line)
-    except FileNotFoundError as ex:
-        raise FileNotFoundError('Could not run the script to get the prime95.exe process name') from ex
-    finally:
-        if not output is None:
-            output.close()
+    # Windows cmd command to get the running task list
+    command = 'tasklist /v /fi "IMAGENAME eq prime95.exe" /fo LIST'
+    output = subprocess.Popen((command), stdout=subprocess.PIPE).stdout
+    output = tuple(output)
+    for line in output:
+        if "Error" in str(line):
+            raise IOError('The script reported the following error: ' + str(line))
+        if "Window Title" in str(line):
+            win_title = str(line)
 
     if (len(win_title) > 0):  
         process_title = (win_title.split(" - ", 1)[1])

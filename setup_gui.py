@@ -21,11 +21,9 @@ class PrimeTweeterGui(Frame):
         app_settings = application_settings.AppSettings()
 
         self.tweet_style_variable = StringVar()
-        #tweet_style_current = [name for (name, val) in tweet_styles_dict.items() if val == app_settings.tweets_are_excitable]
         self.tweet_style_variable.set(app_settings.tweets_are_excitable)
 
         self.tweet_frequency_variable = StringVar()
-        #tweet_freq_current = [name for (name, val) in frequency_dict.items() if val == app_settings.tweet_frequency]
         self.tweet_frequency_variable.set(app_settings.tweet_frequency)
       
         def get_frame(parent):
