@@ -46,11 +46,11 @@ class PrimeTweeterGui(Frame):
             entry.pack(fill=X, padx=5, expand=True)
             return entry
 
-        
-        image_frame = get_frame(self)
-
+        header_frame = get_frame(self)
+        header_label = Label(header_frame, text="Prime Progress Tweeter", width=27, justify=RIGHT, font=("Helvetica", 20, "bold"), anchor=E, background = background_theme)
+        header_label.pack(side=RIGHT, padx=5, pady=5)
         image_gif = PhotoImage(file="assets/hen-311285_640.gif")
-        image_label = Label(image_frame, image=image_gif, borderwidth=0)
+        image_label = Label(header_frame, image=image_gif, borderwidth=0, justify=LEFT, anchor=W)
         image_label.image = image_gif
         image_label.pack(padx=5, pady=5)
 
@@ -98,8 +98,6 @@ class PrimeTweeterGui(Frame):
             Radiobutton(tweet_frequency_frame, text=item[0], padx = 10, font=("Helvetica", 10), background = background_theme, 
                         variable=self.tweet_frequency_variable, value=item[1]).pack(side=LEFT)
 
-        save_test_frame = Frame(self, background = background_theme)
-        save_test_frame.pack(fill=X, pady=10, padx=150)
 
         def update_settings():
             consumer_key = consumer_key_entry.get()
@@ -108,20 +106,24 @@ class PrimeTweeterGui(Frame):
             access_secret = access_secret_entry.get()
             tweet_style = self.tweet_style_variable.get()
             tweet_frequency = self.tweet_frequency_variable.get()
-
             app_settings.set_config_values(consumer_key, consumer_secret, access_token, access_secret, tweet_style, tweet_frequency, "")
 
-        save_button = Button(save_test_frame, font=("Helvetica", 11), text="Save", width=15, command=update_settings)
+        save_test_frame = get_frame(self)
+        save_test_frame.pack(fill=X, pady=10, padx=50)
+
+        save_button = Button(save_test_frame, font=("Helvetica", 11), text="Save and start tweeting", width=20, command=update_settings)
         save_button.pack(side=LEFT, padx=5, pady=5)
 
-        test_button = Button(save_test_frame, font=("Helvetica", 11), text="Test tweet", width=15)
+        test_button = Button(save_test_frame, font=("Helvetica", 11), text="Send test tweet", width=15)
         test_button.pack(side=LEFT, padx=5, pady=5)
 
+        stop_button = Button(save_test_frame, font=("Helvetica", 11), text="Stop tweeting", width=15)
+        stop_button.pack(side=LEFT, padx=5, pady=5)
 
-def main():
-  
+
+def main():  
     root = Tk()
-    root.geometry("600x600+150+150")
+    root.geometry("600x700+100+100")
     app = PrimeTweeterGui()
     root.mainloop()  
 

@@ -29,7 +29,7 @@ class ProgressFinder:
                         raise IOError('The script reported the following error: ' + str(line))
                     if "Window Title" in str(line):
                         win_title = str(line)
-
+                        #TODO - Title is different if prime95 is paused - handle this!
                 if (len(win_title) > 0):  
                     process_title = (win_title.split(" - ", 1)[1])
                     percentage = process_title.split(" of ", 1)[0]

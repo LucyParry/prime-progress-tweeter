@@ -3,6 +3,7 @@ import datetime
 import os
 import re
 import subprocess
+import sys
 import tweepy
 
 import application_settings
@@ -157,7 +158,9 @@ def do_completed_exponent_update(app_settings, api, completed_exponent):
 
 def main():
     try:
-        app_settings = application_settings.AppSettings()
+        config_file_path = sys.path[0] + '\\' + 'config.ini'
+        print(config_file_path)
+        app_settings = application_settings.AppSettings(config_file_path)
         api = setup_twitter_api(app_settings)
     except (configparser.NoSectionError, tweepy.TweepError) as ex:
         write_error_to_logfile(str(ex))

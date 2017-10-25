@@ -3,10 +3,10 @@ import configparser
 class AppSettings:
     """
     """
-    def __init__(self):
+    def __init__(self, config_file_path):
         parser = configparser.ConfigParser()
         try:
-            parser.read('config.ini')
+            parser.read(config_file_path)
             self.consumer_key = parser.get('settings', 'consumer_key')
             self.consumer_secret = parser.get('settings', 'consumer_secret')
             self.access_token = parser.get('settings', 'access_token')
@@ -19,7 +19,7 @@ class AppSettings:
             self.style_options_dict = {"Excitable": "True", "Just the facts": "False"}
 
         except configparser.NoSectionError as ex:
-            raise NoSectionError("Couldn't parse the config settings - Check the config.ini file exists and contains the [credentials] section") from ex
+            raise NoSectionError("Couldn't parse the config settings - Check the config.ini file exists and contains the [settings] section") from ex
 
 
     def set_config_values(self, str_consumer_key, str_consumer_secret, str_access_token, str_access_secret, str_excitable, str_frequency_cmd, str_path):
