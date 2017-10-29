@@ -14,7 +14,6 @@ class AppSettings:
             self.tweets_are_excitable = parser.get('settings', 'tweets_excitable')
             self.tweet_frequency = parser.get('settings', 'tweet_frequency_cmd')
             self.prime95_path = parser.get('settings', 'prime95_location_path')
-
             self.frequency_options_dict = {"Hour": "/sc HOURLY", "3 hours": "/sc HOURLY /mo 3", "6 hours": "/sc HOURLY /mo 6", "12 hours": "/sc HOURLY /mo 12", "Day": "/sc DAILY"}
             self.style_options_dict = {"Excitable": "True", "Just the facts": "False"}
 

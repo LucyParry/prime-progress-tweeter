@@ -2,6 +2,7 @@ from tkinter import *
 
 import application_settings
 import tweeter
+import setup_task
 
 class PrimeTweeterGui(Frame):
   
@@ -18,7 +19,7 @@ class PrimeTweeterGui(Frame):
         entry_bkg_theme = "gray95"
         self.configure(background = background_theme)
 
-        app_settings = application_settings.AppSettings()
+        app_settings = application_settings.AppSettings(sys.path[0] + '\config.ini')
 
         self.tweet_style_variable = StringVar()
         self.tweet_style_variable.set(app_settings.tweets_are_excitable)
@@ -107,6 +108,7 @@ class PrimeTweeterGui(Frame):
             tweet_style = self.tweet_style_variable.get()
             tweet_frequency = self.tweet_frequency_variable.get()
             app_settings.set_config_values(consumer_key, consumer_secret, access_token, access_secret, tweet_style, tweet_frequency, "")
+            setup_task.create_or_update_task(tweet_frequency)
 
         save_test_frame = get_frame(self)
         save_test_frame.pack(fill=X, pady=10, padx=50)
