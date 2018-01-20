@@ -7,14 +7,17 @@ import os
 def create_or_update_task(frequency_string):
     """
     """
-    python_interpreter_path = sys.executable
-    app_path = sys.path[0]
+    python_interpreter_path = "'" + sys.executable + "'"
+    app_path = "'" + sys.path[0] + "\\tweeter.py" + "'"
     if task_exists():
         task_string = 'schtasks /delete /tn "PrimeProgressTweeterTask" /f'
         subprocess_wrapper.run_task_without_stdin(task_string)
-    task_string = 'schtasks /create /tn "PrimeProgressTweeterTask" /tr ' + '"' + python_interpreter_path + '" ' + app_path + ' ' + frequency_string
+    task_string = 'schtasks /create /tn "PrimeProgressTweeterTask" /tr ' + '"' + python_interpreter_path + ' ' + app_path + '" ' + frequency_string
     result, error = subprocess_wrapper.run_task_without_stdin(task_string)
-
+    if len(error) > 0:
+        return str(error[0])
+    else:
+        return "Success"
 
 def task_exists():
     """

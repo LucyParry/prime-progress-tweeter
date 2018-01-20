@@ -1,4 +1,5 @@
 from tkinter import *
+from tkinter import messagebox
 
 import application_settings
 import tweeter
@@ -108,7 +109,11 @@ class PrimeTweeterGui(Frame):
             tweet_style = self.tweet_style_variable.get()
             tweet_frequency = self.tweet_frequency_variable.get()
             app_settings.set_config_values(consumer_key, consumer_secret, access_token, access_secret, tweet_style, tweet_frequency, "")
-            setup_task.create_or_update_task(tweet_frequency)
+            result = setup_task.create_or_update_task(tweet_frequency)
+            if (result == "Success"):
+                messagebox.showinfo("Success", "Done - Task created successfully!")
+            else:
+                messagebox.showerror("Error", "An error occurred - " + result)
 
         save_test_frame = get_frame(self)
         save_test_frame.pack(fill=X, pady=10, padx=50)

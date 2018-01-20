@@ -43,10 +43,12 @@ def get_last_tweet_exponent(api):
         last_tweet = api.home_timeline(count = 1)[0]
     except tweepy.error.TweepError as ex:
         raise tweepy.error.TweepError("Tweepy encountered an error when accessing the most recent tweet") from ex 
-    pattern = re.compile('[M]\d+')
-    match_exponent = pattern.search(last_tweet.text)
-    last_tweet_exponent = match_exponent.group()
-    return last_tweet_exponent
+    match_exponent = re.search(r'M\d+', last_tweet.text)
+    if (match_exponent):
+        return match_exponent.group()
+    else:
+        return ""
+    
 
 
 def compose_progress_message(app_settings, percentage, exponentMString):
@@ -125,9 +127,10 @@ def do_progress_update(app_settings, api):
         progress_finder_obj = progress_finder.ProgressFinder()
         percentage, current_exponent = progress_finder_obj.get_progress_from_window_title()
         last_tweet_exponent = get_last_tweet_exponent(api)
-        if last_tweet_exponent != current_exponent:
+        if (last_tweet_exponent != current_exponent) and last_tweet_exponent != "":
             # We have changed exponents between this check and the last one - Check what the verdict on the last one was instead
-            do_completed_exponent_update(app_settings, api, last_tweet_exponent)      
+            do_completed_exponent_update(app_settings, api, last_tweet_exponent)
+
         message = compose_progress_message(app_settings, percentage, current_exponent)
         print(message)
         tweet_message(api, message)       
