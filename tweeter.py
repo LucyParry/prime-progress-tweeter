@@ -63,7 +63,7 @@ def compose_progress_message(app_settings, percentage, exponentMString):
         exclamation = ""
         if app_settings.tweets_are_excitable:
             exclamation = exclamationator.Exclamation(sys.path[0])
-        message = exclamation.text + " We're " + percentage + " through calculating whether " + exponentMString + " (2" + superscript_exponent + "-1) is prime!"
+        message = exclamation.text + " We're " + percentage + " through calculating whether " + exponentMString + " (2" + superscript_exponent + "-1) might be prime!"
         if len(message) < 140:
             return message
         else:
