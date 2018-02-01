@@ -64,13 +64,13 @@ def compose_progress_message(app_settings, percentage, exponentMString):
         if app_settings.tweets_are_excitable:
             exclamation = exclamationator.Exclamation(sys.path[0])
         message = exclamation.text + " We're " + percentage + " through calculating whether " + exponentMString + " (2" + superscript_exponent + "-1) might be prime!"
-        if len(message) < 140:
+        if len(message) < 280:
             return message
         else:
-            compose_progress_message(percentage, exponentMString)
+            compose_progress_message(app_settings, percentage, exponentMString)
 
 
-def compose_result_message(resultString, completed_exponent):
+def compose_result_message(app_settings, resultString, completed_exponent):
     """
     Build a message about the result of an exponent 
     """
@@ -80,13 +80,13 @@ def compose_result_message(resultString, completed_exponent):
     else:
         superscript_exponent = integer_to_superscript(int(integer_exponent))
         exclamation = ""
-        if use_excitable_tweets():
+        if app_settings.tweets_are_excitable:
             exclamation = exclamationator.Exclamation(sys.path[0], True)
             message = exclamation.text + " It turns out that" + " (2" + superscript_exponent + "-1) " + resultString + "!"
-            if len(message) < 140:
+            if len(message) < 280:
                 return message
             else:
-                compose_result_message(percentage, exponentMString)
+                compose_result_message(app_settings, percentage, exponentMString)
 
 
 def integer_to_superscript(integer):
@@ -153,7 +153,7 @@ def do_completed_exponent_update(app_settings, api, completed_exponent):
 
         if len(exponent_result) > 0:
             exponent_result = (exponent_result.split(".")[0]).split(",")[1]
-            message = compose_result_message(exponent_result, completed_exponent)
+            message = compose_result_message(app_settings, exponent_result, completed_exponent)
             tweet_message(api, message)
 
     except configparser.NoSectionError as ex:
