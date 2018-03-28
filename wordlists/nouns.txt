@@ -494,3 +494,4 @@ orrery
 opsimath
 poo emoji
 spectacles
+hapax legomenon
