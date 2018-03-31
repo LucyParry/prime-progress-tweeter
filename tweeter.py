@@ -40,15 +40,17 @@ def get_last_tweet_exponent(api):
     Get the last tweet from the authorised user
     """
     try:
-        last_tweet = api.home_timeline(count = 1)[0]
+        last_tweet = api.user_timeline(api.auth.username, count = 1, include_rts = False)[0]
     except tweepy.error.TweepError as ex:
         raise tweepy.error.TweepError("Tweepy encountered an error when accessing the most recent tweet") from ex 
-    match_exponent = re.search(r'M\d+', last_tweet.text)
-    if (match_exponent):
-        return match_exponent.group()
+    if ((len(last_tweet.text)) > 0):
+        match_exponent = re.search(r'M\d+', last_tweet.text)
+        if (match_exponent):
+            return True, match_exponent.group()
+        else:
+            return False, ""
     else:
-        return ""
-    
+        return False, ""
 
 
 def compose_progress_message(app_settings, percentage, exponentMString):
@@ -63,7 +65,7 @@ def compose_progress_message(app_settings, percentage, exponentMString):
         exclamation = ""
         if app_settings.tweets_are_excitable:
             exclamation = exclamationator.Exclamation(sys.path[0])
-        message = exclamation.text + " We're " + percentage + " through calculating whether " + exponentMString + " (2" + superscript_exponent + "-1) might be prime!"
+        message = exclamation.text + " We're " + percentage + " through calculating whether " + exponentMString + " (2" + superscript_exponent + "-1) might be a Mersenne prime number!"
         if len(message) < 280:
             return message
         else:
@@ -126,11 +128,11 @@ def do_progress_update(app_settings, api):
     try:
         progress_finder_obj = progress_finder.ProgressFinder()
         percentage, current_exponent = progress_finder_obj.get_progress_from_window_title()
-        last_tweet_exponent = get_last_tweet_exponent(api)
-        if (last_tweet_exponent != current_exponent) and last_tweet_exponent != "":
-            # We have changed exponents between this check and the last one - Check what the verdict on the last one was instead
-            do_completed_exponent_update(app_settings, api, last_tweet_exponent)
-
+        last_tweet_found, last_tweet_exponent = get_last_tweet_exponent(api)
+        if (last_tweet_found and last_tweet_exponent != ""):
+            if (last_tweet_exponent != current_exponent):
+                # We have changed exponents between this check and the last one - Check what the verdict on the last one was first
+                do_completed_exponent_update(app_settings, api, last_tweet_exponent)
         message = compose_progress_message(app_settings, percentage, current_exponent)
         print(message)
         tweet_message(api, message)       
