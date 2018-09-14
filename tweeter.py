@@ -154,7 +154,7 @@ def do_completed_exponent_update(app_settings, api, completed_exponent):
                     exponent_result = line
 
         if len(exponent_result) > 0:
-            exponent_result = (exponent_result.split(".")[0]).split(",")[1]
+            exponent_result = (exponent_result.split(".")[0])
             message = compose_result_message(app_settings, exponent_result, completed_exponent)
             tweet_message(api, message)
 
